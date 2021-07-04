@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { Grid } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { useSubscription as _useSubscription, useQuery } from 'urql';
+import { useSubscription as _useSubscription } from 'urql';
 import MetricCard from '../MetricCard';
-import { actions as metricsActions } from '../reducer';
+import { actions as metricsActions } from './reducer';
 
 const MetricsQuery = `
   subscription MessageSub {
@@ -14,12 +14,7 @@ const MetricsQuery = `
       unit
     }
   }
-`
-const AvailableMetricsQuery = `
-  query MetricsQuery {
-    getMetrics
-  }
-`
+`;
 
 function useSubscription({ query }) {
   const dispatch = useDispatch();
@@ -36,20 +31,8 @@ function useSubscription({ query }) {
 }
 
 function MetricsDashboard() {
-  const dispatch = useDispatch();
   useSubscription({ query: MetricsQuery });
-  const [availableMetricsResponse] = useQuery({ query: AvailableMetricsQuery });
-
-  useEffect(() => {
-    const { data, error } = availableMetricsResponse;
-    if (error) {
-      dispatch(metricsActions.metricError(error));
-    } else if (data) {
-      dispatch(metricsActions.availableOptions(data));
-    }
-  }, [availableMetricsResponse, dispatch]);
-
-  const metrics = useSelector(state => state.metrics.availableOptions);
+  const metrics = useSelector(state => state.metrics.options);
 
   return (
     <Grid container spacing={2}>
