@@ -1,11 +1,17 @@
 import { createSlice } from "redux-starter-kit";
 
-const initialState = { }
+const initialState = {
+  availableOptions: []
+}
 
 const slice = createSlice({
-  name: 'dashboard',
+  name: 'metrics',
   initialState,
   reducers: {
+    availableOptions: (state, action) => {
+      const { getMetrics } = action.payload;
+      state.availableOptions = [...getMetrics];
+    },
     metricReceived: (state, action) => {
       const { metric, at, value, unit } = action.payload;
       state[metric] = { metric, at, value, unit };
